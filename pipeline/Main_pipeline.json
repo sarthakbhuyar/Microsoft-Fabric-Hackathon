@@ -1,0 +1,99 @@
+{
+    "name": "Main_pipeline",
+    "objectId": "a5cbc994-e155-4f88-88a7-66d35c1a1726",
+    "properties": {
+        "activities": [
+            {
+                "name": "E-mail data input",
+                "type": "RefreshDataflow",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "dataflowId": "159ff0ac-c448-4298-9ddc-82ef566513f2",
+                    "workspaceId": "8034d15b-bf56-4837-b4d0-97c890988106",
+                    "notifyOption": "NoNotification"
+                }
+            },
+            {
+                "name": "OpenAI processing",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "E-mails to lakehouse",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "68b6fd96-c1bf-42f2-af5f-fe9f4647a69d",
+                    "workspaceId": "8034d15b-bf56-4837-b4d0-97c890988106"
+                }
+            },
+            {
+                "name": "E-mails to lakehouse",
+                "type": "RefreshDataflow",
+                "dependsOn": [
+                    {
+                        "activity": "E-mail data input",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "dataflowId": "45b2be39-1f1d-4a5d-80a6-a2c5f8259e97",
+                    "workspaceId": "8034d15b-bf56-4837-b4d0-97c890988106",
+                    "notifyOption": "NoNotification"
+                }
+            },
+            {
+                "name": "Results to Warehouse",
+                "type": "RefreshDataflow",
+                "dependsOn": [
+                    {
+                        "activity": "OpenAI processing",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "dataflowId": "25f45f3e-cbcd-407b-8fc5-9f7a55d33f43",
+                    "workspaceId": "8034d15b-bf56-4837-b4d0-97c890988106",
+                    "notifyOption": "NoNotification"
+                }
+            }
+        ],
+        "annotations": [],
+        "lastModifiedByObjectId": "fc487b5c-5b0a-4c85-a873-53170d27b296",
+        "lastPublishTime": "2024-02-29T08:13:09Z"
+    }
+}
